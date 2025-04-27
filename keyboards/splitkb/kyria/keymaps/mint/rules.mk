@@ -5,3 +5,5 @@ RGBLIGHT_ENABLE = no       # Enable keyboard RGB underglow
 POINTING_DEVICE_DRIVER = cirque_pinnacle_i2c
 POINTING_DEVICE_ENABLE = yes
 WPM_ENABLE = yes
+
+CONVERT_TO=kb2040

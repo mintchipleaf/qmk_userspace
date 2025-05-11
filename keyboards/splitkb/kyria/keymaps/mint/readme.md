@@ -1,6 +1,6 @@
-# Kyria's Default Keymap
+# ⌨️mint's kyria keymap
 
-![KLE render of the default Kyria keymap with QWERTY as the base layer. Layers are shown in sublegends.](https://i.ibb.co/RQZx2dY/default-kyria2.jpg)
+<!-- ![KLE render of the default Kyria keymap with QWERTY as the base layer. Layers are shown in sublegends.](https://i.ibb.co/RQZx2dY/default-kyria2.jpg) -->
 
 
 The default keymap contains 5 layers which allows it to include all keys found on an ANSI layout TKL keyboard plus media keys.
@@ -18,13 +18,13 @@ The five different layers are the following:
 Base Layer: -
 
 ,-------------------------------------------.                              ,-------------------------------------------.
-|  Tab   |   -  |   -  |   -  |   -  |   -  |                              |   -  |   -  |   -  |   -  |   -  |  Bksp  |
+|  Tab   |   -  |   -  |   -  |   -  |   -  |                              |   -  |   -  |   -  |   -  |   -  | F-Keys |
 |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
 |Ctrl/Esc|   -  |   -  |   -  |   -  |   -  |                              |   -  |   -  |   -  |   -  |   -  |Ctrl/ - |
 |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
 | LShift |   -  |   -  |   -  |   -  |   -  | [ {  |CapsLk|  |F-Keys|  ] } |   -  |   -  |   -  |   -  |   -  | RShift |
 `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
-                       |Adjust| LGUI | LAlt/| Space| Nav  |  | Sym  | Space| AltGr| RGUI | Menu |
+                       |Adjust| LGUI | LAlt/| Space| Nav  |  | Sym  | Bksp | AltGr| RGUI | Menu |
                        |      |      | Enter|      |      |  |      |      |      |      |      |
                        `----------------------------------'  `----------------------------------'
 ```
@@ -36,13 +36,13 @@ For the rest of this write-up, the base layer will be assumed to be QWERTY and w
 Base Layer: QWERTY
 
 ,-------------------------------------------.                              ,-------------------------------------------.
-|  Tab   |   Q  |   W  |   E  |   R  |   T  |                              |   Y  |   U  |   I  |   O  |   P  |  Bksp  |
+|  Tab   |   Q  |   W  |   E  |   R  |   T  |                              |   Y  |   U  |   I  |   O  |   P  | F-Keys |
 |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
 |Ctrl/Esc|   A  |   S  |   D  |   F  |   G  |                              |   H  |   J  |   K  |   L  | ;  : |Ctrl/' "|
 |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
 | LShift |   Z  |   X  |   C  |   V  |   B  | [ {  |CapsLk|  |F-keys|  ] } |   N  |   M  | ,  < | . >  | /  ? | RShift |
 `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
-                       |Adjust| LGUI | LAlt/| Space| Nav  |  | Sym  | Space| AltGr| RGUI | Menu |
+                       |Adjust| LGUI | LAlt/| Space| Nav  |  | Sym  | Bksp | AltGr| RGUI | Menu |
                        |      |      | Enter|      |      |  |      |      |      |      |      |
                        `----------------------------------'  `----------------------------------'
 ```
@@ -129,13 +129,13 @@ Finally, we're one Quality-Of-Life update away from the actual base layer. <kbd>
 Nav Layer: Media, navigation
                                                                                                                          
 ,-------------------------------------------.                              ,-------------------------------------------.
-|        |      |      |      |      |      |                              | PgUp | Home |   ↑  | End  | VolUp| Delete |
+|        |      |      |      |      |      |                              | PgUp | Home |   ↑  | End  | VolUp|        |
 |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
 |        |  GUI |  Alt | Ctrl | Shift|      |                              | PgDn |  ←   |   ↓  |   →  | VolDn| Insert |
 |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
 |        |      |      |      |      |      |      |ScLck |  |      |      | Pause|M Prev|M Play|M Next|VolMut| PrtSc  |
 `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
-                       |      |      |      |      |      |  |      |      |      |      |      |
+                       |      |      |      |      |      |  |      |Delete|      |      |      |
                        |      |      |      |      |      |  |      |      |      |      |      |
                        `----------------------------------'  `----------------------------------'
 ```

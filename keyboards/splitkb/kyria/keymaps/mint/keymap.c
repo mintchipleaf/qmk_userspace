@@ -673,16 +673,11 @@ bool oled_task_user(void) {
 
     /* KEYBOARD PET VARIABLES END */
 
-    if (is_keyboard_master()) {
-        print_status_wide();
-    }
-    // else {
-    //     print_logo_narrow();
-    // }
+    print_status_wide();
     return false;
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         /* KEYBOARD PET STATUS START */
 
@@ -705,7 +700,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         /* KEYBOARD PET STATUS END */
     }
-    return true;
 }
 
 #endif

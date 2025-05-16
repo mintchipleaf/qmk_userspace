@@ -25,6 +25,7 @@ enum layers {
     _SYM,
     _FUNCTION,
     _ADJUST,
+    _MOUSE
 };
 
 
@@ -160,7 +161,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * ,-------------------------------------------.                              ,-------------------------------------------.
  * |        |  F9  | F10  | F11  | F12  |      |                              |      |      |      |      |      |        |
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
- * |        |  F5  |  F6  |  F7  |  F8  |      |                              |      | Shift| Ctrl | AltGr|  GUI |        |
+ * |        |  F5  |  F6  |  F7  |  F8  |      |                              |      | Shift| Ctrl |  Alt |  GUI |        |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
  * |        |  F1  |  F2  |  F3  |  F4  |      |      |      |  |      |      |      |      |      |      |      |        |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
@@ -170,7 +171,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  */
     [_FUNCTION] = LAYOUT(
       _______,  KC_F9 ,  KC_F10,  KC_F11,  KC_F12, _______,                                     _______, _______, _______, _______, _______, _______,
-      _______,  KC_F5 ,  KC_F6 ,  KC_F7 ,  KC_F8 , _______,                                     _______, KC_RSFT, KC_RCTL, KC_RALT, KC_RGUI, _______,
+      _______,  KC_F5 ,  KC_F6 ,  KC_F7 ,  KC_F8 , _______,                                     _______, KC_RSFT, KC_RCTL, KC_LALT, KC_RGUI, _______,
       _______,  KC_F1 ,  KC_F2 ,  KC_F3 ,  KC_F4 , _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
                                  _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
     ),
@@ -194,6 +195,27 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
       _______, _______, _______, DVORAK , _______, _______,                                    RGB_TOG, RGB_SAI, RGB_HUI, RGB_VAI,  RGB_MOD, _______,
       _______, _______, _______, COLEMAK, _______, _______,_______, _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
                                  _______, _______, _______,_______, _______, _______, _______, _______, _______, _______
+    ),
+
+/*
+ * Mouse key layer
+ *
+ * ,-------------------------------------------.                              ,-------------------------------------------.
+ * |        |      |      |      |      |      |                              |Mouse1|Mouse2|Mouse3|      |      |        |
+ * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
+ * |        |      |Mouse3|Mouse2|Mouse1|      |                              |      |Mouse1|Mouse2|Mouse3|      |        |
+ * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
+ * |        |      |      |      |      |      |      |      |  |      |Mouse1|Mouse2|      |      |      |      |        |
+ * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
+ *                        |      |      |      |      |      |  |Mouse1|Mouse2|Mouse3|      |      |
+ *                        |      |      |      |      |      |  |      |      |      |      |      |
+ *                        `----------------------------------'  `----------------------------------'
+ */
+    [_MOUSE] = LAYOUT(
+      _______, _______, _______, _______, _______, _______,                                     MS_BTN1, MS_BTN2, MS_BTN3, _______, _______, _______,
+      _______, _______, MS_BTN3, MS_BTN2, MS_BTN1, _______,                                     _______, MS_BTN1, MS_BTN2, MS_BTN3, _______, _______,
+      _______, _______, _______, _______, _______, _______, _______, _______, _______, MS_BTN1, MS_BTN2, _______, _______, _______, _______, _______,
+                                 _______, _______, _______, _______, _______, MS_BTN1, MS_BTN2, MS_BTN3, _______, _______
     ),
 
 // /*
@@ -621,16 +643,16 @@ static void print_status_wide(void) {
 
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write("base ", false);
+            oled_write("base", false);
             break;
         case _NAV:
-            oled_write("nav ", false);
+            oled_write("nav", false);
             break;
         case _SYM:
-            oled_write("sym ", false);
+            oled_write("sym", false);
             break;
         case _FUNCTION:
-            oled_write("func ", false);
+            oled_write("func", false);
             break;
         // case _GAMING:
         //     oled_write("Games", false);
@@ -641,9 +663,12 @@ static void print_status_wide(void) {
         // case _LOWER:
         //     oled_write("Lower", false);
         //     break;
-        // case _ADJUST:
-        //     oled_write("Adj  ", false);
-        //     break;
+        case _ADJUST:
+            oled_write("set", false);
+            break;
+        case _MOUSE:
+            oled_write("mouse", false);
+            break;
         default:
             oled_write("undef", false);
     }
@@ -700,6 +725,11 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         /* KEYBOARD PET STATUS END */
     }
+}
+
+void pointing_device_init_user(void) {
+    set_auto_mouse_layer(7); // only required if AUTO_MOUSE_DEFAULT_LAYER is not set to index of <mouse_layer>
+    set_auto_mouse_enable(true);         // always required before the auto mouse feature will work
 }
 
 #endif

@@ -584,14 +584,14 @@ static void render_luna(int LUNA_X, int LUNA_Y) {
     }
 
     /* this fixes the screen on and off bug */
-    if (current_wpm > 0) {
+    if(current_wpm > 0){
         oled_on();
         anim_sleep = timer_read32();
     } else if(timer_elapsed32(anim_sleep) > OLED_TIMEOUT) {
         oled_off();
     }
-
 }
+
 
 /* KEYBOARD PET END */
 
@@ -643,16 +643,16 @@ static void print_status_wide(void) {
 
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write("base", false);
+            oled_write("base ", false);
             break;
         case _NAV:
-            oled_write("nav", false);
+            oled_write("navi ", false);
             break;
         case _SYM:
-            oled_write("sym", false);
+            oled_write("symbl", false);
             break;
         case _FUNCTION:
-            oled_write("func", false);
+            oled_write("func ", false);
             break;
         // case _GAMING:
         //     oled_write("Games", false);
@@ -664,7 +664,7 @@ static void print_status_wide(void) {
         //     oled_write("Lower", false);
         //     break;
         case _ADJUST:
-            oled_write("set", false);
+            oled_write("set  ", false);
             break;
         case _MOUSE:
             oled_write("mouse", false);
@@ -725,7 +725,55 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
         /* KEYBOARD PET STATUS END */
     }
+
+    oled_on();
+    anim_sleep = timer_read32();
 }
+
+report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    if (mouse_report.x || mouse_report.y)
+    {
+        oled_on();
+        anim_sleep = timer_read32();
+    }
+    return mouse_report;
+}
+
+// static void oled_timeout(bool ON_CONDITION) {
+    // if(ON_CONDITION) {
+    //     oled_on();
+    //     anim_sleep = timer_read32();
+    // } else if(timer_elapsed32(anim_sleep) > OLED_TIMEOUT) {
+    //     oled_off();
+    // }
+// }
+
+// //Setup some mask which can be or'd with bytes to turn off pixels
+// const uint8_t single_bit_masks[8] = {127, 191, 223, 239, 247, 251, 253, 254};
+
+// static void fade_display(void) {
+//     //Define the reader structure
+//     oled_buffer_reader_t reader;
+//     uint8_t buff_char;
+//     if (random() % 30 == 0) {
+//         srand(timer_read());
+//         // Fetch a pointer for the buffer byte at index 0. The return structure
+//         // will have the pointer and the number of bytes remaining from this
+//         // index position if we want to perform a sequential read by
+//         // incrementing the buffer pointer
+//         reader = oled_read_raw(0);
+//         //Loop over the remaining buffer and erase pixels as we go
+//         for (uint16_t i = 0; i < reader.remaining_element_count; i++) {
+//             //Get the actual byte in the buffer by dereferencing the pointer
+//             buff_char = *reader.current_element;
+//             if (buff_char != 0) {
+//                 oled_write_raw_byte(buff_char & single_bit_masks[rand() % 8], i);
+//             }
+//             //increment the pointer to fetch a new byte during the next loop
+//             reader.current_element++;
+//         }
+//     }
+// }
 
 void pointing_device_init_user(void) {
     set_auto_mouse_layer(7); // only required if AUTO_MOUSE_DEFAULT_LAYER is not set to index of <mouse_layer>

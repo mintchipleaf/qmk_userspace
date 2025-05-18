@@ -643,16 +643,16 @@ static void print_status_wide(void) {
 
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
-            oled_write("base ", false);
+            oled_write("BAS", false);
             break;
         case _NAV:
-            oled_write("navi ", false);
+            oled_write("NAV", false);
             break;
         case _SYM:
-            oled_write("symbl", false);
+            oled_write("SYM", false);
             break;
         case _FUNCTION:
-            oled_write("func ", false);
+            oled_write("FNC", false);
             break;
         // case _GAMING:
         //     oled_write("Games", false);
@@ -664,10 +664,10 @@ static void print_status_wide(void) {
         //     oled_write("Lower", false);
         //     break;
         case _ADJUST:
-            oled_write("set  ", false);
+            oled_write("SET", false);
             break;
         case _MOUSE:
-            oled_write("mouse", false);
+            oled_write("MOU", false);
             break;
         default:
             oled_write("undef", false);

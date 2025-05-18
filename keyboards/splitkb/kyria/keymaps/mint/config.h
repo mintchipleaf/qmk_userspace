@@ -40,7 +40,7 @@
 #define SPLIT_HAND_PIN B5
 #define SPLIT_USB_DETECT
 #define SPLIT_WATCHDOG_ENABLE
-#define SPLIT_OLED_ENABLE
+// #define SPLIT_OLED_ENABLE
 
 #ifdef SPLIT_OLED_ENABLE
 #    define SPLIT_WPM_ENABLE
@@ -62,15 +62,17 @@
 
 #define SPLIT_POINTING_ENABLE
 #define POINTING_DEVICE_RIGHT
-#define POINTING_DEVICE_GESTURES_SCROLL_ENABLE // Circular scroll. #define POINTING_DEVICE_AUTO_MOUSE_ENABLE
+#define POINTING_DEVICE_GESTURES_SCROLL_ENABLE // Circular scroll.
 #define POINTING_DEVICE_TASK_THROTTLE_MS 8
+
 #define POINTING_DEVICE_AUTO_MOUSE_ENABLE
+#define AUTO_MOUSE_TIME 500
 
 #define POINTING_DEVICE_GESTURES_CURSOR_GLIDE_ENABLE
 #define MOUSEKEY_INERTIA	undefined	//Enable Inertia mode
 #define MOUSEKEY_DELAY	        150	//Delay between pressing a movement key and cursor movement
 #define MOUSEKEY_INTERVAL	16	//Time between cursor movements in milliseconds (16 = 60fps)
-#define MOUSEKEY_MAX_SPEED	32	//Maximum cursor speed at which acceleration stops
+#define MOUSEKEY_MAX_SPEED	48	//Maximum cursor speed at which acceleration stops
 #define MOUSEKEY_TIME_TO_MAX	32	//Number of frames until maximum cursor speed is reached
 #define MOUSEKEY_FRICTION	24	//How quickly the cursor stops after releasing a key
 #define MOUSEKEY_MOVE_DELTA	1	//How much to move on first frame (1 strongly recommended)

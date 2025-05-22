@@ -16,8 +16,8 @@
 #include <stdint.h>
 #include QMK_KEYBOARD_H
 #include <qp.h>
-#include "carbonthin24.qff.h"
-#include "nostromo-outline.qgf.h"
+#include "carbonthin27.qff.h"
+#include "nostromo-greeble.qgf.h"
 
 #define HAL_USE_I2C TRUE
 
@@ -866,6 +866,7 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 
 #ifdef POINTING_DEVICE_ENABLE
 
+/* Wakes OLED on mouse movement */
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (mouse_report.x || mouse_report.y)
     {
@@ -882,6 +883,7 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
 
 #ifdef POINTING_DEVICE_ENABLE
 
+/* Initializes auto mouse layers */
 void pointing_device_init_user(void) {
     set_auto_mouse_layer(_MOUSE);        // only required if AUTO_MOUSE_DEFAULT_LAYER is not set to index of <mouse_layer>
     set_auto_mouse_enable(true);    // always required before the auto mouse feature will work
@@ -890,14 +892,16 @@ void pointing_device_init_user(void) {
 #endif //POINTING_DEVICE_ENABLE
 
 
+/* Layer display text */
 static const char *base_layer_text = "NOSTROMO ";
-static const char *nav_layer_text = "NAVIGATE  ";
-static const char *symbol_layer_text = "SYMBOLISM";
-static const char *fn_layer_text = "FUNCTION  ";
-static const char *settings_layer_text = "SETTINGS  ";
-static const char *mouse_layer_text = "MOUSE   01";
+static const char *nav_layer_text = "NAVIGATE ";
+static const char *symbol_layer_text = "SYMBOLS  ";
+static const char *fn_layer_text = "FUNCTION ";
+static const char *settings_layer_text = "SETTINGS ";
+static const char *mouse_layer_text = "MOUSE  O1 ";
 static const char *undef_layer_text = "UNDEFINED ";
 
+/* Get current layer's display text */
 static const char* get_layer_text(void) {
     switch (get_highest_layer(layer_state)) {
         case _QWERTY:
@@ -927,26 +931,55 @@ static const char* get_layer_text(void) {
     return base_layer_text;
 }
 
+/* Layer dirty state */
+bool layer_dirty = false;
+layer_state_t layer_state_set_user(layer_state_t state){
+    layer_dirty = true;
+    return state;
+}
+
+/* QP variables */
 static painter_device_t display;
-static painter_image_handle_t nostromo_outline;
-static painter_font_handle_t carbonthin24;
+static painter_image_handle_t nostromo_greeble;
+static painter_font_handle_t carbonthin27;
 
 void keyboard_post_init_user(void) {
     display = qp_sh1106_make_i2c_device(128, 64, 0x3c);
     qp_init(display, QP_ROTATION_180); // Initialise the display
 
-    nostromo_outline = qp_load_image_mem(gfx_nostromo_outline);
-    carbonthin24 = qp_load_font_mem(font_carbonthin24);
-
-    qp_drawimage(display, 0, 0, nostromo_outline);
+    /* Load images & fonts for QP */
+    nostromo_greeble = qp_load_image_mem(gfx_nostromo_greeble);
+    carbonthin27 = qp_load_font_mem(font_carbonthin27);
 }
 
-static const char *numbers = "180924609";
+static const char *numbers = "18O9246O9";
+static const uint16_t y1 = 11;
+static const uint16_t y2 = 32;
+static const uint16_t y3 = 53;
+
 void housekeeping_task_user(void) {
-    if(carbonthin24 != NULL) {
-        // /* Print current layer */
-        qp_drawtext(display, 2, 13, carbonthin24, get_layer_text());
-        qp_drawtext(display, 2, 35, carbonthin24, numbers);
+    if(carbonthin27 != NULL) {
+        static uint32_t last_draw = 0;
+        if (layer_dirty && timer_elapsed32(last_draw) > 33) { // Throttle to 30fps
+            last_draw = timer_read32();
+            /* Print current layer */
+            qp_drawtext(display, 0, 10, carbonthin27, get_layer_text());
+            qp_drawtext(display, 0, 32, carbonthin27, numbers);
+
+            /* Now draw graphics to overlap negative space around text */
+            qp_line(display, 0, y1, 0, y2-1, 255, 255, 255); // left line NOSTROMO
+            qp_line(display, 0, y1-1, 118, y1-1, 255, 255, 255); // top line NOSTROMO
+            qp_line(display, 118, y1, 118, y2-4, 255, 255, 255); // right line NOSTROMO
+            qp_line(display, 118, y2-3, 127, y2-3, 255, 255, 255); // top line sm angle
+            qp_line(display, 127, y2-2, 127, y2-1, 255, 255, 255); // right line sm angle
+            qp_rect(display, 0, y2, 127, y3, 255, 255, 255, false); // numbers rectangle
+
+            qp_drawimage(display, 58, 0, nostromo_greeble); // top greeble image
+
+            /* Send to display and un-dirty layer */
+            qp_flush(display);
+            layer_dirty = false;
+        }
     }
 }
 

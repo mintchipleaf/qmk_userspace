@@ -9,7 +9,7 @@ QUANTUM_PAINTER_ENABLE = yes
 QUANTUM_PAINTER_DRIVERS += sh1106_i2c
 QUANTUM_PAINTER_DRIVERS += surface
 
-SRC += carbonthin24.qff.c
-SRC += nostromo-outline.qgf.c
+SRC += carbonthin27.qff.c
+SRC += nostromo-greeble.qgf.c
 
 CONVERT_TO=liatris

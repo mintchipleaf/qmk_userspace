@@ -450,11 +450,11 @@ static const char weyland_wings [] PROGMEM = {
 #define ANIM_SIZE 96 // number of bytes in array. If you change sprites, minimize for adequate firmware size. max is 1024
 
 /* timers */
-uint32_t anim_timer = 0;
+uint32_t luna_anim_timer = 0;
 uint32_t anim_sleep = 0;
 
 /* current frame */
-uint8_t current_frame = 0;
+uint8_t current_frame_number = 0;
 
 /* status variables */
 int current_wpm = 0;
@@ -736,8 +736,8 @@ static void render_luna(int LUNA_X, int LUNA_Y) {
     }
 
     /* animation timer */
-    if(timer_elapsed32(anim_timer) > ANIM_FRAME_DURATION) {
-        anim_timer = timer_read32();
+    if(timer_elapsed32(luna_anim_timer) > ANIM_FRAME_DURATION) {
+        luna_anim_timer = timer_read32();
         animate_luna();
     }
 
@@ -892,6 +892,8 @@ void pointing_device_init_user(void) {
 #endif //POINTING_DEVICE_ENABLE
 
 
+#ifdef QUANTUM_PAINTER_ENABLE
+
 /* Layer display text */
 static const char *base_layer_text = "NOSTROMO ";
 static const char *nav_layer_text = "NAVIGATE ";
@@ -943,45 +945,84 @@ static painter_device_t display;
 static painter_image_handle_t nostromo_greeble;
 static painter_font_handle_t carbonthin27;
 
+// static const char *full_reg_number = "18O9246O9";
+static const char *reg_number = "18O246";
+
 void keyboard_post_init_user(void) {
     display = qp_sh1106_make_i2c_device(128, 64, 0x3c);
     qp_init(display, QP_ROTATION_180); // Initialise the display
 
+    luna_auto_draw = false;
+    luna_set_display(display);
+    luna_set_position(95, 33);
+
     /* Load images & fonts for QP */
     nostromo_greeble = qp_load_image_mem(gfx_nostromo_greeble);
     carbonthin27 = qp_load_font_mem(font_carbonthin27);
+
+    qp_drawtext(display, 0, 32, carbonthin27, reg_number);
 }
 
-static const char *numbers = "18O9246O9";
 static const uint16_t y1 = 11;
 static const uint16_t y2 = 32;
 static const uint16_t y3 = 53;
 
+bool draw_dirty = false;
+bool jump_cleanup = false;
 void housekeeping_task_user(void) {
-    if(carbonthin27 != NULL) {
-        static uint32_t last_draw = 0;
-        if (layer_dirty && timer_elapsed32(last_draw) > 33) { // Throttle to 30fps
-            last_draw = timer_read32();
-            /* Print current layer */
-            qp_drawtext(display, 0, 10, carbonthin27, get_layer_text());
-            qp_drawtext(display, 0, 32, carbonthin27, numbers);
+    draw_dirty = false;
+    if(carbonthin27 == NULL) {
+        return;
+    }
 
-            /* Now draw graphics to overlap negative space around text */
-            qp_line(display, 0, y1, 0, y2-1, 255, 255, 255); // left line NOSTROMO
-            qp_line(display, 0, y1-1, 118, y1-1, 255, 255, 255); // top line NOSTROMO
-            qp_line(display, 118, y1, 118, y2-4, 255, 255, 255); // right line NOSTROMO
-            qp_line(display, 118, y2-3, 127, y2-3, 255, 255, 255); // top line sm angle
-            qp_line(display, 127, y2-2, 127, y2-1, 255, 255, 255); // right line sm angle
-            qp_rect(display, 0, y2, 127, y3, 255, 255, 255, false); // numbers rectangle
+    if(jump_cleanup) {
+        jump_cleanup = false;
+        layer_dirty = true;
+        luna_draw(false);
+    }
 
-            qp_drawimage(display, 58, 0, nostromo_greeble); // top greeble image
+    static uint32_t last_draw = 0;
+    if ((layer_dirty && timer_elapsed32(last_draw) > 33) || jump_cleanup) {
+        last_draw = timer_read32();
+        draw_dirty = true;
 
-            /* Send to display and un-dirty layer */
-            qp_flush(display);
-            layer_dirty = false;
-        }
+        /* Print current layer */
+        qp_drawtext(display, 0, 10, carbonthin27, get_layer_text());
+
+        /* Now draw graphics to overlap negative space around text */
+        qp_line(display, 0, y1, 0, y2-1, 255, 255, 255); // left line NOSTROMO
+        qp_line(display, 0, y1-1, 118, y1-1, 255, 255, 255); // top line NOSTROMO
+        qp_line(display, 118, y1, 118, y2-4, 255, 255, 255); // right line NOSTROMO
+        qp_line(display, 118, y2-3, 127, y2-3, 255, 255, 255); // top line sm angle
+        qp_line(display, 127, y2-2, 127, y2-1, 255, 255, 255); // right line sm angle
+
+        qp_drawimage(display, 58, 0, nostromo_greeble); // top greeble image
+
+        /* Un-dirty layer */
+        layer_dirty = false;
+    }
+
+    draw_dirty = draw_dirty || is_luna_timer_elapsed();
+
+    if (draw_dirty){
+        draw_dirty = false;
+        luna_draw(false);
+        qp_rect(display, 0, y2, 127, y3, 255, 255, 255, false); // numbers rectangle
+
+        qp_flush(display);
     }
 }
+
+void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_SPC:
+            if (!record->event.pressed) {
+                jump_cleanup = true;
+            }
+    }
+}
+
+#endif //#QUANTUM_PAINTER_ENABLE
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {

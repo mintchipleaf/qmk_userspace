@@ -1,0 +1,3 @@
+[submodule "modules/mintchipleaf"]
+	path = modules/mintchipleaf
+	url = https://github.com/mintchipleaf/qmk_modules.git

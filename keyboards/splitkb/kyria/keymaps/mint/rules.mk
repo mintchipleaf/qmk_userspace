@@ -7,7 +7,6 @@ POINTING_DEVICE_ENABLE = yes
 WPM_ENABLE = yes
 QUANTUM_PAINTER_ENABLE = yes
 QUANTUM_PAINTER_DRIVERS += sh1106_i2c
-QUANTUM_PAINTER_DRIVERS += surface
 
 SRC += carbonthin27.qff.c
 SRC += nostromo-greeble.qgf.c

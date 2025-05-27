@@ -55,6 +55,10 @@
 #    define OLED_TIMEOUT 10000
 #endif
 
+#ifdef QUANTUM_PAINTER_ENABLE
+#    define QUANTUM_PAINTER_NUM_IMAGES 11
+#endif
+
 #define I2C_DRIVER I2CD1
 
 #define MOUSE_EXTENDED_REPORT

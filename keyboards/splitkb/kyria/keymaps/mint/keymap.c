@@ -969,23 +969,16 @@ static const uint16_t y3 = 53;
 
 bool draw_dirty = false;
 bool jump_cleanup = false;
+bool is_jumping = false;
 void housekeeping_task_user(void) {
-    draw_dirty = false;
     if(carbonthin27 == NULL) {
         return;
     }
 
-    if(jump_cleanup) {
-        jump_cleanup = false;
-        layer_dirty = true;
-        luna_draw(false);
-    }
-
     static uint32_t last_draw = 0;
-    if ((layer_dirty && timer_elapsed32(last_draw) > 33) || jump_cleanup) {
-        last_draw = timer_read32();
-        draw_dirty = true;
+    bool draw_dirty = (layer_dirty && timer_elapsed32(last_draw) > 33) || jump_cleanup || is_jumping;
 
+    if (draw_dirty) {
         /* Print current layer */
         qp_drawtext(display, 0, 10, carbonthin27, get_layer_text());
 
@@ -1002,12 +995,13 @@ void housekeeping_task_user(void) {
         layer_dirty = false;
     }
 
-    draw_dirty = draw_dirty || is_luna_timer_elapsed();
-
-    if (draw_dirty){
-        draw_dirty = false;
-        luna_draw(false);
+    if(draw_dirty || is_luna_timer_elapsed()) {
+        luna_draw(false, !jump_cleanup);
         qp_rect(display, 0, y2, 127, y3, 255, 255, 255, false); // numbers rectangle
+
+        jump_cleanup = false;
+        is_jumping = false;
+        draw_dirty = false;
 
         qp_flush(display);
     }
@@ -1016,7 +1010,9 @@ void housekeeping_task_user(void) {
 void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case KC_SPC:
-            if (!record->event.pressed) {
+            if (record->event.pressed) {
+                is_jumping = true;
+            } else {
                 jump_cleanup = true;
             }
     }

@@ -1,59 +1,45 @@
-# QMK Userspace
+# ⌨️@mintchipleaf's QMK keymap
 
-This is a template repository which allows for an external set of QMK keymaps to be defined and compiled. This is useful for users who want to maintain their own keymaps without having to fork the main QMK repository.
+This is my [QMK](https://docs.qmk.fm) keymap for
+the splitkb [Kyria](https://docs.splitkb.com/product-guides/kyria).
 
-## Howto configure your build targets
+## Features
 
-1. Run the normal `qmk setup` procedure if you haven't already done so -- see [QMK Docs](https://docs.qmk.fm/#/newbs) for details.
-1. Fork this repository
-1. Clone your fork to your local machine
-1. Enable userspace in QMK config using `qmk config user.overlay_dir="$(realpath qmk_userspace)"`
-1. Add a new keymap for your board using `qmk new-keymap`
-    * This will create a new keymap in the `keyboards` directory, in the same location that would normally be used in the main QMK repository. For example, if you wanted to add a keymap for the Planck, it will be created in `keyboards/planck/keymaps/<your keymap name>`
-    * You can also create a new keymap using `qmk new-keymap -kb <your_keyboard> -km <your_keymap>`
-    * Alternatively, add your keymap manually by placing it in the location specified above.
-    * `layouts/<layout name>/<your keymap name>/keymap.*` is also supported if you prefer the layout system
-1. Add your keymap(s) to the build by running `qmk userspace-add -kb <your_keyboard> -km <your_keymap>`
-    * This will automatically update your `qmk.json` file
-    * Corresponding `qmk userspace-remove -kb <your_keyboard> -km <your_keymap>` will delete it
-    * Listing the build targets can be done with `qmk userspace-list`
-1. Commit your changes
+Several features are being developed as QMK community modules in
+[mintchipleaf/qmk-modules](https://github.com/mintchipleaf/qmk_modules/), a git
+submodule of this repo. Currently the only custom module is Luna, but others are being added.
 
-## Howto build with GitHub
+* [Luna Keyboard Pet](https://github.com/mintchipleaf/qmk_modules/lunapet) &ndash; The adorable dog that lives in and reacts to your keyboard
 
-1. In the GitHub Actions tab, enable workflows
-1. Push your changes above to your forked GitHub repository
-1. Look at the GitHub Actions for a new actions run
-1. Wait for the actions run to complete
-1. Inspect the Releases tab on your repository for the latest firmware build
 
-## Howto build locally
+## Installation
 
-1. Run the normal `qmk setup` procedure if you haven't already done so -- see [QMK Docs](https://docs.qmk.fm/#/newbs) for details.
-1. Fork this repository
-1. Clone your fork to your local machine
-1. `cd` into this repository's clone directory
-1. Set global userspace path: `qmk config user.overlay_dir="$(realpath .)"` -- you MUST be located in the cloned userspace location for this to work correctly
-    * This will be automatically detected if you've `cd`ed into your userspace repository, but the above makes your userspace available regardless of your shell location.
-1. Compile normally: `qmk compile -kb your_keyboard -km your_keymap` or `make your_keyboard:your_keymap`
+This repo works as an [External QMK
+Userspace](https://docs.qmk.fm/newbs_external_userspace) and makes use of the
+[Community Modules](https://docs.qmk.fm/features/community_modules) support
+added in QMK Firmware 0.28.0, released 2025-02-27. Instructions on how to use
+it in QMK:
 
-Alternatively, if you configured your build targets above, you can use `qmk userspace-compile` to build all of your userspace targets at once.
+1. [Set up QMK](https://docs.qmk.fm/newbs) or [update your QMK set
+   up](https://docs.qmk.fm/newbs_git_using_your_master_branch#updating-your-master-branch)
+   to get the latest.
 
-## Extra info
+2. Clone this repo locally
 
-If you wish to point GitHub actions to a different repository, a different branch, or even a different keymap name, you can modify `.github/workflows/build_binaries.yml` to suit your needs.
+   ```sh
+   git clone --recurse-submodules https://github.com/mintchipleaf/qmk_userspace
+   ```
 
-To override the `build` job, you can change the following parameters to use a different QMK repository or branch:
+3. Run the following shell command, replacing "`path/to/qmk_userspace`" with the
+   relative path to your clone of `qmk-userspace` from the previous step:
+
+   ```sh
+   qmk config user.overlay_dir="$(realpath path/to/qmk_userspace)"
+   ```
+
+My keymap may then be compiled and flashed with
+
+```sh
+qmk flash -kb splitkb/kyria -km mint
 ```
-    with:
-      qmk_repo: qmk/qmk_firmware
-      qmk_ref: master
-```
-
-If you wish to manually manage `qmk_firmware` using git within the userspace repository, you can add `qmk_firmware` as a submodule in the userspace directory instead. GitHub Actions will automatically use the submodule at the pinned revision if it exists, otherwise it will use the default latest revision of `qmk_firmware` from the main repository.
-
-This can also be used to control which fork is used, though only upstream `qmk_firmware` will have support for external userspace until other manufacturers update their forks.
-
-1. (First time only) `git submodule add https://github.com/qmk/qmk_firmware.git`
-1. (To update) `git submodule update --init --recursive`
-1. Commit your changes to your userspace repository
+>Section copied from [getreuer/qmk-keymap](https://github.com/getreuer/qmk-keymap)

@@ -9,7 +9,7 @@ Several features are being developed as QMK community modules in
 [mintchipleaf/qmk-modules](https://github.com/mintchipleaf/qmk_modules/), a git
 submodule of this repo. Currently the only custom module is Luna, but others are being added.
 
-* [Luna Keyboard Pet](https://github.com/mintchipleaf/qmk_modules/lunapet) &ndash; The adorable dog that lives in and reacts to your keyboard
+* [Luna Keyboard Pet](https://github.com/mintchipleaf/qmk_modules/tree/main/lunapet) &ndash; The adorable dog that lives in and reacts to your keyboard
 
 
 ## Installation

@@ -188,7 +188,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
  * |--------+------+------+------+------+------|                              |------+------+------+------+------+--------|
  * |        |      |      |Dvorak|      |      |                              | TOG  | SAI  | HUI  | VAI  | MOD  |        |
  * |--------+------+------+------+------+------+-------------.  ,-------------+------+------+------+------+------+--------|
- * |        |      |      |Colmak|      |      |      |      |  |      |      |      | SAD  | HUD  | VAD  | RMOD |        |
+ * |        |      |      |Colmak|      |      | LUNA |      |  |      |      |      | SAD  | HUD  | VAD  | RMOD |        |
  * `----------------------+------+------+------+------+------|  |------+------+------+------+------+----------------------'
  *                        |      |      |      |      |      |  |      |      |      |      |      |
  *                        |      |      |      |      |      |  |      |      |      |      |      |
@@ -197,7 +197,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_ADJUST] = LAYOUT(
       _______, _______, _______, QWERTY , _______, _______,                                    _______, _______, _______, _______,  _______, _______,
       _______, _______, _______, DVORAK , _______, _______,                                    RGB_TOG, RGB_SAI, RGB_HUI, RGB_VAI,  RGB_MOD, _______,
-      _______, _______, _______, COLEMAK, _______, _______,_______, _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
+      _______, _______, _______, COLEMAK, _______, _______, LUNA  , _______, _______, _______, _______, RGB_SAD, RGB_HUD, RGB_VAD, RGB_RMOD, _______,
                                  _______, _______, _______,_______, _______, _______, _______, _______, _______, _______
     ),
 
@@ -945,8 +945,18 @@ static painter_device_t display;
 static painter_image_handle_t nostromo_greeble;
 static painter_font_handle_t carbonthin27;
 
-// static const char *full_reg_number = "18O9246O9";
+static const char *full_reg_number = "18O9246O9";
 static const char *reg_number = "18O246";
+
+bool luna_toggled = false;
+void handle_luna_toggle(bool ENABLED) {
+    if(ENABLED) {
+        qp_drawtext(display, 0, 32, carbonthin27, reg_number);
+    } else {
+        qp_drawtext(display, 0, 32, carbonthin27, full_reg_number);
+    }
+    luna_toggled = true;
+}
 
 void keyboard_post_init_user(void) {
     display = qp_sh1106_make_i2c_device(128, 64, 0x3c);
@@ -960,7 +970,11 @@ void keyboard_post_init_user(void) {
     nostromo_greeble = qp_load_image_mem(gfx_nostromo_greeble);
     carbonthin27 = qp_load_font_mem(font_carbonthin27);
 
-    qp_drawtext(display, 0, 32, carbonthin27, reg_number);
+    #ifdef LUNA_START_DISABLED
+        handle_luna_toggle(false);
+    #else
+        handle_luna_toggle(true);
+    #endif //LUNA_START_DISABLED
 }
 
 static const uint16_t y1 = 11;
@@ -995,13 +1009,14 @@ void housekeeping_task_user(void) {
         layer_dirty = false;
     }
 
-    if(draw_dirty || is_luna_timer_elapsed()) {
+    if(draw_dirty || is_luna_timer_elapsed() || luna_toggled) {
         luna_draw(false, !jump_cleanup);
         qp_rect(display, 0, y2, 127, y3, 255, 255, 255, false); // numbers rectangle
 
         jump_cleanup = false;
         is_jumping = false;
         draw_dirty = false;
+        luna_toggled = false;
 
         qp_flush(display);
     }
@@ -1015,6 +1030,12 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
             } else {
                 jump_cleanup = true;
             }
+            break;
+        case LUNA:
+            if (record->event.pressed) {
+                handle_luna_toggle(luna_enabled);
+            }
+            break;
     }
 }
 

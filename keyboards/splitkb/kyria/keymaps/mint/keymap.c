@@ -1058,11 +1058,20 @@ void post_process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool encoder_update_user(uint8_t index, bool clockwise) {
 
     if (index == 0) {
-        // Volume control
-        if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
-            tap_code(KC_VOLD);
+        if(get_highest_layer(layer_state) == _SYM) {
+            // Page up/Page down
+            if (clockwise) {
+                tap_code(KC_PGDN);
+            } else {
+                tap_code(KC_PGUP);
+            }
+        }
+        else {
+            // Volume control
+            if (clockwise)
+                tap_code(KC_VOLU);
+            else
+                tap_code(KC_VOLD);
         }
     } else if (index == 1) {
         // Page up/Page down
